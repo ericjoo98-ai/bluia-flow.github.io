@@ -1,0 +1,6 @@
+{
+  "name": "SyncKanban Pro",
+  "description": "실시간 협업, 드래그 앤 드롭, 데이터 시각화 통계 대시보드 및 백업을 지원하는 반응형 칸반 보드",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
