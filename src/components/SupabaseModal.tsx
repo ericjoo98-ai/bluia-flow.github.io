@@ -25,6 +25,8 @@ import {
   clearSupabaseConfig,
   testSupabaseConnection,
   normalizeSupabaseUrl,
+  DEFAULT_SUPABASE_PROJECT_ID,
+  DEFAULT_SUPABASE_URL,
   DEFAULT_SUPABASE_PUBLISHABLE_KEY,
   DEFAULT_SUPABASE_SECRET_KEY,
   SUPABASE_SQL_SETUP,
@@ -67,7 +69,7 @@ export const SupabaseModal: React.FC<SupabaseModalProps> = ({ isOpen, onClose })
   useEffect(() => {
     if (isOpen) {
       const config = getStoredSupabaseConfig();
-      setUrl(config.url || '');
+      setUrl(config.url || DEFAULT_SUPABASE_URL);
       setAnonKey(config.anonKey || DEFAULT_SUPABASE_PUBLISHABLE_KEY);
       setSecretKey(config.secretKey || DEFAULT_SUPABASE_SECRET_KEY);
       setTestResult({ status: 'idle', message: '' });
@@ -244,8 +246,8 @@ export const SupabaseModal: React.FC<SupabaseModalProps> = ({ isOpen, onClose })
                         <Globe className="w-3.5 h-3.5 text-neutral-500" />
                         <span>Project URL 또는 프로젝트 ID</span>
                       </div>
-                      <span className="text-[11px] text-neutral-400">
-                        예: https://[프로젝트ID].supabase.co
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950 px-1.5 py-0.5 rounded">
+                        기본값 ({DEFAULT_SUPABASE_PROJECT_ID}) 설정됨
                       </span>
                     </div>
                   </label>
@@ -253,11 +255,11 @@ export const SupabaseModal: React.FC<SupabaseModalProps> = ({ isOpen, onClose })
                     type="text"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    placeholder="https://xyzabcdefg.supabase.co 또는 프로젝트 ID"
+                    placeholder="https://otzkhkbfjhqkjhmnbypr.supabase.co 또는 프로젝트 ID"
                     className="w-full px-3.5 py-2 text-xs font-mono bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white transition-all"
                   />
                   <p className="text-[11px] text-neutral-400 mt-1">
-                    Supabase 대시보드 <b>Project Settings &gt; API</b>의 <b>Project URL</b> 또는 브라우저 주소창의 project ref를 입력하세요.
+                    프로젝트 ID <b>{DEFAULT_SUPABASE_PROJECT_ID}</b>가 기본 하드코딩되어 다른 브라우저 및 GitHub Pages에서도 동일한 보드로 자동 접속됩니다.
                   </p>
                 </div>
 
@@ -269,7 +271,7 @@ export const SupabaseModal: React.FC<SupabaseModalProps> = ({ isOpen, onClose })
                         <span>Publishable Key (anon / public)</span>
                       </div>
                       <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950 px-1.5 py-0.5 rounded">
-                        입력해주신 키 기본 설정됨
+                        기본 API Key 설정됨
                       </span>
                     </div>
                   </label>
@@ -292,7 +294,9 @@ export const SupabaseModal: React.FC<SupabaseModalProps> = ({ isOpen, onClose })
                         <ShieldCheck className="w-3.5 h-3.5 text-indigo-500" />
                         <span>Secret Key (service_role / 백엔드 보관용)</span>
                       </div>
-                      <span className="text-[10px] text-neutral-400">보안 관리</span>
+                      <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-50 dark:bg-indigo-950 px-1.5 py-0.5 rounded">
+                        기본 Secret Key 설정됨
+                      </span>
                     </div>
                   </label>
                   <input

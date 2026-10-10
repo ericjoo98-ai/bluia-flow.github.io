@@ -1,7 +1,9 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Task, ActivityLog } from '../types/kanban';
 
-// User-provided Supabase API Keys (Default credentials)
+// User-provided Supabase API Keys (Default hardcoded credentials)
+export const DEFAULT_SUPABASE_PROJECT_ID = 'otzkhkbfjhqkjhmnbypr';
+export const DEFAULT_SUPABASE_URL = 'https://otzkhkbfjhqkjhmnbypr.supabase.co';
 export const DEFAULT_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_D6rzjpoLXQULCEDfcQhOIQ_yNNA5tHN';
 export const DEFAULT_SUPABASE_SECRET_KEY = '';
 
@@ -25,7 +27,7 @@ export function normalizeSupabaseUrl(input: string): string {
   if (cleaned.startsWith('https://') || cleaned.startsWith('http://')) {
     return cleaned.replace(/\/+$/, '');
   }
-  // If user entered only project ref e.g. "d6rzjpo..." or "xyz123"
+  // If user entered only project ref e.g. "otzkhkbfjhqkjhmnbypr" or "d6rzjpo..."
   if (/^[a-zA-Z0-9_-]+$/.test(cleaned)) {
     return `https://${cleaned}.supabase.co`;
   }
@@ -40,11 +42,23 @@ export function getStoredSupabaseConfig() {
   const envUrl = import.meta.env.VITE_SUPABASE_URL || '';
   const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-  const rawUrl = (localUrl || envUrl || '').trim();
+  // Use local storage if set and valid, otherwise fall back to environment or default hardcoded credentials
+  let rawUrl = (localUrl?.trim() || envUrl.trim() || DEFAULT_SUPABASE_URL).trim();
+  if (!rawUrl || rawUrl === 'null' || rawUrl === 'undefined' || rawUrl.includes('your-project-id')) {
+    rawUrl = DEFAULT_SUPABASE_URL;
+  }
+
+  let anonKey = (localKey?.trim() || envKey.trim() || DEFAULT_SUPABASE_PUBLISHABLE_KEY).trim();
+  if (!anonKey || anonKey === 'null' || anonKey === 'undefined' || anonKey.includes('your-anon-key')) {
+    anonKey = DEFAULT_SUPABASE_PUBLISHABLE_KEY;
+  }
+
+  let secretKey = (localSecret?.trim() || DEFAULT_SUPABASE_SECRET_KEY).trim();
+  if (!secretKey || secretKey === 'null' || secretKey === 'undefined') {
+    secretKey = DEFAULT_SUPABASE_SECRET_KEY;
+  }
+
   const url = normalizeSupabaseUrl(rawUrl);
-  // Default to user's provided publishable key if not explicitly set
-  const anonKey = (localKey || envKey || DEFAULT_SUPABASE_PUBLISHABLE_KEY).trim();
-  const secretKey = (localSecret || DEFAULT_SUPABASE_SECRET_KEY).trim();
 
   const isValid = Boolean(
     url &&
@@ -53,7 +67,7 @@ export function getStoredSupabaseConfig() {
     !url.includes('your-project-id')
   );
 
-  return { url, anonKey, secretKey, isValid, isFromEnv: Boolean(!localUrl && envUrl) };
+  return { url, anonKey, secretKey, isValid, isFromEnv: Boolean(!localUrl && (envUrl || DEFAULT_SUPABASE_URL)) };
 }
 
 let clientInstance: SupabaseClient | null = null;

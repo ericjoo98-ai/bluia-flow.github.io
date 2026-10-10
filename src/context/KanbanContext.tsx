@@ -283,6 +283,12 @@ export const KanbanProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (!tasksRes.error && tasksRes.data) {
         if (tasksRes.data.length > 0) {
           setTasks(tasksRes.data.map(dbToTask));
+        } else {
+          // If Supabase table is empty (0 tasks), seed it with current local tasks so cloud is populated
+          const currentLocalTasks = tasks.length > 0 ? tasks : INITIAL_TASKS;
+          if (currentLocalTasks.length > 0) {
+            client.from('tasks').upsert(currentLocalTasks.map(taskToDb)).then(() => {});
+          }
         }
       }
 
